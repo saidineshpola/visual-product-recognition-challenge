@@ -4,7 +4,8 @@ import torch
 from tqdm import tqdm
 
 from utils import AverageMeter
-
+from torch.utils.tensorboard import SummaryWriter
+writer = SummaryWriter()
 
 def train(model: torch.nn.Module,
           train_loader: torch.utils.data.DataLoader,
@@ -27,7 +28,7 @@ def train(model: torch.nn.Module,
     acc_stat = AverageMeter('Acc.')
 
     train_iter = tqdm(train_loader, desc='Train', dynamic_ncols=True, position=1)
-
+    writer.add_graph(model, train_iter[0])
     for step, (x, y) in enumerate(train_iter):
         out = model(x.cuda().to(memory_format=torch.contiguous_format))
         loss = criterion(out, y.cuda())
@@ -54,6 +55,8 @@ def train(model: torch.nn.Module,
     acc_val, acc_avg = acc_stat()
     loss_val, loss_avg = loss_stat()
     print('Train process of epoch: {} is done; \n loss: {:.4f}; acc: {:.2f}'.format(epoch, loss_avg, acc_avg))
+    writer.add_scalar("Accuracy",  acc_avg,, step,epoch)
+    writer.add_scalar("Loss", loss_avg,, step,epoch)
 
 
 def validation(model: torch.nn.Module,
