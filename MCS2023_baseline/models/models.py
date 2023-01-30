@@ -10,7 +10,7 @@ def load_model(config):
     arch = config.model.arch
     num_classes = config.dataset.num_of_classes
     if arch.startswith('resnet'):
-        model = models.resnet18(pretrained=True, progress=True, ) #models.__dict__[arch](weights=models.ResNet18_Weights.DEFAULT)
+        model = models.resnet50(pretrained=True, progress=True, ) #models.__dict__[arch](weights=models.ResNet18_Weights.DEFAULT)
         model.fc = nn.Linear(model.fc.in_features, num_classes)
     else:
         raise Exception('model type is not supported:', arch)
